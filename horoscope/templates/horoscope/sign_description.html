@@ -1,0 +1,5 @@
+{% extends 'horoscope/horoscope_main.html' %}
+
+{% block content %}
+    {{ name.upper }}: {{ description|safe }}
+{% endblock %}

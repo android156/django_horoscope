@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'horoscope/style.css' %}">
+    <title>{{ title }}}</title>
+</head>
+<body>
+    <div class="wrapper">
+      <div class="top">
+        <div class="header">
+            <ul class="menu">
+                <a href="{% url 'main' %}">Знаки</a>
+                <a href="{% url 'elements' %}">Стихии</a>
+                <a>Кто ты?</a>
+            </ul>
+        </div>
+        <div class="content">
+            <h1>{{ h1 }}</h1>
+            {% block content %}
+            {% endblock %}
+        </div>
+      </div>
+      <div class="footer">
+
+      </div>
+    </div>
+
+
+
+</body>
+</html>

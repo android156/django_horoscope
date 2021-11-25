@@ -1,0 +1,10 @@
+{% extends 'horoscope/horoscope_main.html' %}
+
+
+{% block content %}
+    <ul>
+        {% for element, url in elements_url_dict.items %}
+            <li><a href={{ url }}>{{ element|capfirst }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

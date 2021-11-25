@@ -1,0 +1,9 @@
+{% extends 'horoscope/horoscope_main.html' %}
+
+{% block content %}
+    <ul>
+        {% for sign, url in sign_url_dict.items %}
+            <li><a href={{ url }}>{{ sign|title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
