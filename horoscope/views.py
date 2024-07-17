@@ -8,62 +8,62 @@ from django.urls import reverse  # метод собирающий пути
 
 zodiac_descriptions_dict = {
     'aries':
-        {'name': 'Овен',
+        {'name': 'Овен', 'icon': '&#9800;',
          'description': 'первый знак зодиака, планета Марс (с 21 марта по 20 апреля).',
          'begin': '0321', 'end': '0420'},
 
     'taurus':
-        {'name': 'Телец',
+        {'name': 'Телец', 'icon': '&#9801;',
          'description': 'второй знак зодиака, планета Венера (с 21 апреля по 21 мая).',
          'begin': '0421', 'end': '0521'},
 
     'gemini':
-        {'name': 'Близнецы',
+        {'name': 'Близнецы', 'icon': '&#9802;',
          'description': 'третий знак зодиака, планета Меркурий (с 22 мая по 21 июня).',
          'begin': '0522', 'end': '0621'},
 
     'cancer':
-        {'name': 'Рак',
+        {'name': 'Рак', 'icon': '&#9803;',
          'description': 'четвёртый знак зодиака, Луна (с 22 июня по 22 июля).',
          'begin': '0622', 'end': '0722'},
 
     'leo':
-        {'name': 'Лев',
+        {'name': 'Лев', 'icon': '&#9804;',
          'description': 'пятый знак зодиака, солнце (с 23 июля по 21 августа).',
          'begin': '0723', 'end': '0821'},
 
     'virgo':
-        {'name': 'Дева',
+        {'name': 'Дева', 'icon': '&#9805;',
          'description': 'шестой знак зодиака, планета Меркурий (с 22 августа по 23 сентября)',
          'begin': '0822', 'end': '0923'},
 
     'libra':
-        {'name': 'Весы',
+        {'name': 'Весы', 'icon': '&#9806;',
          'description': 'седьмой знак зодиака, планета Венера (с 24 сентября по 23 октября)',
          'begin': '0924', 'end': '1023'},
 
     'scorpio':
-        {'name': 'Скорпион',
+        {'name': 'Скорпион', 'icon': '&#9807;',
          'description': 'восьмой знак зодиака, планета Марс (с 24 октября по 22 ноября)',
          'begin': '1024', 'end': '1122'},
 
     'sagittarius':
-        {'name': 'Стрелец',
+        {'name': 'Стрелец', 'icon': '&#9808;',
          'description': 'девятый знак зодиака, планета Юпитер (с 23 ноября по 22 декабря).',
          'begin': '1123', 'end': '1222'},
 
     'capricorn':
-        {'name': 'Козерог',
+        {'name': 'Козерог', 'icon': '&#9809;',
          'description': 'десятый знак зодиака, планета Сатурн (с 23 декабря по 20 января).',
          'begin': '1223', 'end': '0120'},
 
     'aquarius':
-        {'name': 'Водолей',
+        {'name': 'Водолей', 'icon': '&#9810;',
          'description': 'одиннадцатый знак зодиака, планеты Уран и Сатурн (с 21 января по 19 февраля).',
          'begin': '0121', 'end': '0219'},
 
     'pisces':
-        {'name': 'Рыбы',
+        {'name': 'Рыбы', 'icon': '&#9811;',
          'description': 'двенадцатый знак зодиака, планеты Юпитер (с 20 февраля по 20 марта).',
          'begin': '0220', 'end': '0320'},
 
@@ -138,6 +138,14 @@ zodiac_signs_types = {
     'water': ['cancer', 'scorpio', 'pisces'],
 }
 
+zodiac_signs_types_icons = {
+    'fire': '&#128293;',
+    'earth': '&#127998;',
+    'air': '&#127788;',
+    'water': '&#128167;',
+}
+
+
 zodiac_signs_types_list = list(zodiac_signs_types)
 
 
@@ -145,6 +153,12 @@ def get_type_of_sign(sign):
     for type in zodiac_signs_types_list:
         if sign in zodiac_signs_types[type]:
             return type
+
+
+def start_page(request):
+    data['title'] = 'Гороскоп'
+    data['h1'] = 'Гороскоп стартовая'
+    return render(request, 'horoscope/start.html', context=data)
 
 
 def horoscope_main_page(request):
@@ -166,11 +180,14 @@ def horoscope_main_page(request):
     # return HttpResponse(response)
     sign_url_dict = {}
     for sign in zodiac_signs_list:
-        sign_url_dict[sign] = reverse('horoscope_name', args=[sign])
+        sign_url_dict[sign] = reverse('horoscope:horoscope_name', args=[sign])
+    # url можно передать напрямую в шаблон
+    # {% url 'horoscope_name' sign_zodiac=sign%}
 
     data['title'] = 'Двенадцать знаков Зодиака'
     data['h1'] = 'Знаки Зодиака'
     data['sign_url_dict'] = sign_url_dict
+    data['zodiac_descriptions_dict'] = zodiac_descriptions_dict  # Весь словарь для экспериментов в шаблонизаторе
 
     return render(request, 'horoscope/sign_list.html', context=data)
 
@@ -178,7 +195,7 @@ def horoscope_main_page(request):
 def horoscope_types(request):
     elements_url_dict = {}
     for zodiac_signs_type in zodiac_signs_types_list:
-        elements_url_dict[zodiac_signs_type] = reverse('elements_types', args=[zodiac_signs_type])
+        elements_url_dict[zodiac_signs_type] = reverse('horoscope:elements_types', args=[zodiac_signs_type])
     data['title'] = 'Стихии знаков Зодиака'
     data['h1'] = 'Стихии'
     data['elements_url_dict'] = elements_url_dict
@@ -198,14 +215,15 @@ def horoscope_types(request):
 def get_info_about_zodiac_sign(request, sign_zodiac: str):  # В аргумент функции дабавили аннотацию :str, хотим тут
     # видеть строку
     if zodiac_descriptions_dict.get(sign_zodiac):
+        data['name'] = zodiac_descriptions_dict[sign_zodiac]['name']
+        data['icon'] = zodiac_descriptions_dict[sign_zodiac]['icon']
         data['title'] = f'Знак {sign_zodiac}'
-        data['h1'] = sign_zodiac
+        data['h1'] = f'{data["icon"]} {data["name"]}({sign_zodiac})'
         data['sign_zodiac'] = sign_zodiac
         data['description'] = zodiac_descriptions_dict[sign_zodiac]['description']
         data['name'] = zodiac_descriptions_dict[sign_zodiac]['name']
 
-
-        return render(request, 'horoscope/sign_description.html', context=data)
+        return render(request, 'horoscope/info_about_zodiac_sign.html', context=data)
     else:
         return HttpResponseNotFound(f'Знак "{sign_zodiac.upper()}" мне неизвестен')
 
@@ -216,7 +234,7 @@ def get_info_about_zodiac_sign_from_it_number(request, number_of_zodiac_sign: in
         sign_zodiac = list(zodiac_descriptions_dict)[number_of_zodiac_sign - 1]
         # return HttpResponseRedirect(f'/horoscope/{sign_zodiac}')   Редирект на существующий роут
         # /horoscope/{sign_zodiac} - начало пути захардкожено исправляем
-        redirect_url = reverse('horoscope_name', args=(sign_zodiac,))  # в кортеж args попадет sign_zodiac, а начало
+        redirect_url = reverse('horoscope:horoscope_name', args=(sign_zodiac,))  # в кортеж args попадет sign_zodiac, а начало
         # пути - "/horoscope" найдется по имени роута (его параметр name = 'horoscope_name') в urls. Аргументов может
         # быть и больше.
         return HttpResponseRedirect(redirect_url)
@@ -227,7 +245,7 @@ def get_info_about_zodiac_sign_from_it_number(request, number_of_zodiac_sign: in
 def get_zodiac_signs_by_elements(request, element):
     elements_url_dict = {}
     for sign in zodiac_signs_types[element]:
-        elements_url_dict[sign] = reverse('horoscope_name', args=[sign])
+        elements_url_dict[sign] = reverse('horoscope:horoscope_name', args=[sign])
 
     data['title'] = f'Знаки стихии {element}'
     data['h1'] = f'Стихия {element}'
@@ -249,9 +267,19 @@ def find_sign_by_date(month, day):
 
 def get_info_by_mixed_data(request, month: str, day: int):
     if month_dict.get(month):
-        redirect_url = reverse('horoscope_data', args=(month_list.index(month) + 1, day))
+        redirect_url = reverse('horoscope:horoscope_data', args=(month_list.index(month) + 1, day))
         return HttpResponseRedirect(redirect_url)
     return HttpResponseNotFound(f'Месяц {month} мне неизвестен')
+
+
+def get_info_by_exact_data(request, date):
+    return HttpResponse(f'Это дата, Карл: {date}')
+
+
+def get_yyyy_converters(request, four_digits_number):
+    if four_digits_number % 4:
+        return HttpResponse(f'Год {four_digits_number}')
+    return HttpResponse(f'Високосный год {four_digits_number}')
 
 
 def get_info_by_numeric_data(request, month: int, day: int):
@@ -259,8 +287,8 @@ def get_info_by_numeric_data(request, month: int, day: int):
         if day < month_dict[month_list[month - 1]]['length']:
             my_sign = find_sign_by_date(month, day)
             type_of_my_sign = get_type_of_sign(my_sign)
-            sign_url = reverse('horoscope_name', args=[my_sign])
-            type_url = reverse('elements_types', args=[type_of_my_sign])
+            sign_url = reverse('horoscope:horoscope_name', args=[my_sign])
+            type_url = reverse('horoscope:elements_types', args=[type_of_my_sign])
             return HttpResponse(f'''{month}/{day} числовой формат даты<br> 
             Ваш знак - <a href="{sign_url}">{my_sign}</a>. Стихия - <a href="{type_url}">{type_of_my_sign}</a>    
         ''')

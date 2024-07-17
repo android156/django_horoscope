@@ -1,6 +1,8 @@
 {% extends 'horoscope/horoscope_main.html' %}
-
-
+{% load static %}
+{% block css_additional %}
+    <link rel="stylesheet" type="text/css" href="{% static 'horoscope/css/style_elements_list.css' %}">
+{% endblock %}
 {% block content %}
     <ul>
         {% for element, url in elements_url_dict.items %}

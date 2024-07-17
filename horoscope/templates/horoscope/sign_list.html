@@ -1,9 +1,31 @@
 {% extends 'horoscope/horoscope_main.html' %}
+{% load static %}
+{% load my_filter %}
 
 {% block content %}
-    <ul>
+    </ul>
         {% for sign, url in sign_url_dict.items %}
             <li><a href={{ url }}>{{ sign|title }}</a></li>
+{# Можно вот так, тогда не придется использовать заранее подготовленный дополнительный словарь #}
+{#          <li><a href={% url 'horoscope_name' sign_zodiac=sign %}>{{ sign|title }}</a></li>   #}
         {% endfor %}
     </ul>
+
+    <br><hr>
+    <h2>Более сложный вариант без подготовленных заранее данных переданных в контекст</h2>
+
+    </ul>
+        {% for sign, sign_info in zodiac_descriptions_dict.items %}
+            <li>
+                <div>
+                    <a style="text-decoration: none" href="{% url 'horoscope:horoscope_name' sign_zodiac=sign %}">{{ sign_info.icon|safe }}{{ sign }}</a></div>
+                <div>{{ sign_info.name }} {{ sign_info.description }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+    <br><hr>
+    <h2>Свой фильтр</h2>
+    {% for sign, sign_info in zodiac_descriptions_dict.items %}
+        {{ sign_info|filter:"icon"|safe }}
+    {% endfor %}
 {% endblock %}
